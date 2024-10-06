@@ -5,6 +5,7 @@ import Home from "../Screens/Home"; // Adjust paths as necessary
 import Favorites from "../Screens/Favorites";
 import Lists from "../Screens/Lists";
 import Settings from "../Screens/Settings";
+import FoundProducts from "../Screens/FoundProducts"; // Import your FoundProducts component
 import Categories from "../Screens/Categories"; // Import your Categories component
 import { Ionicons } from "@expo/vector-icons"; // Icon library
 
@@ -15,13 +16,20 @@ const HomeStack = createStackNavigator(); // Stack Navigator for Home
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
-      {/* Hide the header by setting 'headerShown' to false */}
       <HomeStack.Screen
         name="HomeScreen"
         component={Home}
-        options={{ headerShown: false }}
+        options={{ headerShown: false }} // Hides the header for the Home screen
       />
-      <HomeStack.Screen name="Categories" component={Categories} />
+      <HomeStack.Screen
+        name="Categories"
+        component={Categories}
+      />
+      <HomeStack.Screen
+        name="FoundProducts" // Replace SearchResults with FoundProducts
+        component={FoundProducts}
+        options={{ title: 'Found Products' }} // Set the title for the header
+      />
     </HomeStack.Navigator>
   );
 }
@@ -33,7 +41,7 @@ export default function Nav() {
       screenOptions={{
         tabBarStyle: {
           height: 60, // Increase height for better alignment
-          paddingBottom: 10, // Adjust padding to bring icons higher
+          paddingBottom: 0, // Adjust padding to bring icons higher
         },
         tabBarLabelStyle: {
           fontSize: 12, // Customize font size of the tab labels
@@ -41,47 +49,50 @@ export default function Nav() {
         tabBarIconStyle: {
           marginTop: 5, // Adjust vertical icon alignment
         },
-        headerShown: false, // Hide the header
       }}
     >
       <Tab.Screen
         name="HomeTab"
-        component={HomeStackScreen}
+        component={HomeStackScreen} // You can control the header inside HomeStackScreen
         options={{
-          tabBarLabel: "Home", // Name that appears below the icon
+          tabBarLabel: "", // Name that appears below the icon
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
+          headerShown: false, // Hides the header for HomeTab
         }}
       />
       <Tab.Screen
         name="FavoritesTab"
         component={Favorites}
         options={{
-          tabBarLabel: "Favorites",
+          tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" color={color} size={size} />
           ),
+          headerShown: false, // Show the header for FavoritesTab
         }}
       />
       <Tab.Screen
         name="ListsTab"
         component={Lists}
         options={{
-          tabBarLabel: "Lists",
+          tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" color={color} size={size} />
           ),
+          headerShown: false, // Show the header for ListsTab
         }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={Settings}
         options={{
-          tabBarLabel: "Settings",
+          tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" color={color} size={size} />
           ),
+          headerShown: false, // Show the header for SettingsTab
         }}
       />
     </Tab.Navigator>
