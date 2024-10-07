@@ -1,7 +1,13 @@
 // Import necessary libraries
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Image } from 'expo-image'; // Importing Image from expo-image
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Image } from "expo-image"; // Importing Image from expo-image
 import axios from "axios";
 
 // Define the logos for different sources
@@ -20,7 +26,9 @@ export default function FoundProducts({ route }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`https://bestgetappscripts.onrender.com/products`);
+        const response = await axios.get(
+          `https://bestgetappscripts.onrender.com/products`
+        );
         const allProducts = response.data;
         const filteredProducts = allProducts.filter((product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,7 +56,6 @@ export default function FoundProducts({ route }) {
         renderItem={({ item }) => (
           <View style={styles.productItem}>
             <View style={styles.productDetails}>
-            
               <Image
                 source={{ uri: item.image }}
                 style={styles.productImage}
@@ -77,7 +84,10 @@ export default function FoundProducts({ route }) {
           <TouchableOpacity
             key={index}
             onPress={() => setCurrentPage(index + 1)}
-            style={[styles.pageButton, currentPage === index + 1 && styles.activePageButton]}
+            style={[
+              styles.pageButton,
+              currentPage === index + 1 && styles.activePageButton,
+            ]}
           >
             <Text style={styles.pageButtonText}>{index + 1}</Text>
           </TouchableOpacity>
@@ -86,8 +96,6 @@ export default function FoundProducts({ route }) {
     </View>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
