@@ -1,16 +1,18 @@
+// Import necessary libraries
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native"; // Ensure Image is imported
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from 'expo-image'; // Importing Image from expo-image
 import axios from "axios";
 
+// Define the logos for different sources
+const logos = {
+  Woolworths: require("../../assets/images/woolworths_sa.jpg"),
+  "Pick n pay": require("../../assets/images/Pnp.png"),
+  Checkers: require("../../assets/images/Checkers_sa.jpg"),
+};
+
 export default function FoundProducts({ route }) {
-  const { searchTerm } = route.params; // Get the search term from route params
+  const { searchTerm } = route.params;
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -18,9 +20,7 @@ export default function FoundProducts({ route }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          `https://bestgetappscripts.onrender.com/products`
-        );
+        const response = await axios.get(`https://bestgetappscripts.onrender.com/products`);
         const allProducts = response.data;
         const filteredProducts = allProducts.filter((product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -34,7 +34,6 @@ export default function FoundProducts({ route }) {
     fetchProducts();
   }, [searchTerm]);
 
-  // Pagination Logic
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
     (currentPage - 1) * itemsPerPage,
@@ -48,9 +47,26 @@ export default function FoundProducts({ route }) {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.productItem}>
-            <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.productPrice}>{item.price}</Text>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
+            <View style={styles.productDetails}>
+            
+              <Image
+                source={{ uri: item.image }}
+                style={styles.productImage}
+                contentFit="cover" // Similar to resizeMode in FastImage
+              />
+              <View style={styles.productInfo}>
+                <View style={styles.productHeader}>
+                  <Text style={styles.productName}>{item.name}</Text>
+                  {item.source && logos[item.source] && (
+                    <Image
+                      source={logos[item.source]}
+                      style={styles.storeLogo}
+                    />
+                  )}
+                </View>
+                <Text style={styles.productPrice}>{item.price}</Text>
+              </View>
+            </View>
           </View>
         )}
       />
@@ -61,10 +77,7 @@ export default function FoundProducts({ route }) {
           <TouchableOpacity
             key={index}
             onPress={() => setCurrentPage(index + 1)}
-            style={[
-              styles.pageButton,
-              currentPage === index + 1 && styles.activePageButton,
-            ]}
+            style={[styles.pageButton, currentPage === index + 1 && styles.activePageButton]}
           >
             <Text style={styles.pageButtonText}>{index + 1}</Text>
           </TouchableOpacity>
@@ -73,6 +86,8 @@ export default function FoundProducts({ route }) {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -84,17 +99,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "gray",
     paddingBottom: 10,
+    paddingVertical: 10,
+  },
+  productDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  productImage: {
+    width: 80, // Adjusted width for better layout
+    height: 80, // Adjusted height for better layout
+    marginRight: 10,
+  },
+  productInfo: {
+    flex: 1,
+  },
+  productHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   productName: {
     fontWeight: "bold",
     fontSize: 16,
+    flex: 1,
+  },
+  storeLogo: {
+    width: 30,
+    height: 30,
   },
   productPrice: {
     color: "gray",
-  },
-  productImage: {
-    width: 100,
-    height: 100,
+    marginTop: 5,
   },
   pagination: {
     flexDirection: "row",
