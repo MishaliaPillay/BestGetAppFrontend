@@ -48,6 +48,31 @@ export default function FoundProducts({ route }) {
     currentPage * itemsPerPage
   );
 
+  // Calculate page range to display
+  const getPaginationRange = () => {
+    const range = [];
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4); // Show 5 pages
+
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+
+    return range;
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -80,18 +105,34 @@ export default function FoundProducts({ route }) {
 
       {/* Pagination component */}
       <View style={styles.pagination}>
-        {Array.from({ length: totalPages }, (_, index) => (
+        <TouchableOpacity
+          onPress={handlePreviousPage}
+          disabled={currentPage === 1}
+          style={styles.pageButton}
+        >
+          <Text style={styles.pageButtonText}>{"<"}</Text>
+        </TouchableOpacity>
+
+        {getPaginationRange().map((page) => (
           <TouchableOpacity
-            key={index}
-            onPress={() => setCurrentPage(index + 1)}
+            key={page}
+            onPress={() => setCurrentPage(page)}
             style={[
               styles.pageButton,
-              currentPage === index + 1 && styles.activePageButton,
+              currentPage === page && styles.activePageButton,
             ]}
           >
-            <Text style={styles.pageButtonText}>{index + 1}</Text>
+            <Text style={styles.pageButtonText}>{page}</Text>
           </TouchableOpacity>
         ))}
+
+        <TouchableOpacity
+          onPress={handleNextPage}
+          disabled={currentPage === totalPages}
+          style={styles.pageButton}
+        >
+          <Text style={styles.pageButtonText}>{">"}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
