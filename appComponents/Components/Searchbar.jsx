@@ -3,14 +3,21 @@ import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons"; // For icons
 import { useNavigation } from "@react-navigation/native";
 
-export default function SearchBar({ targetScreen }) {
-  // Accept targetScreen as a prop
+
+export default function SearchBar({
+  targetScreen,
+  showFilter,
+  options,
+  toggleFilter,
+}) {
+  // Accept toggleFilter as a prop
   const [searchTerm, setSearchTerm] = useState("");
   const navigation = useNavigation();
+  const [filterVisible, setFilterVisible] = useState(false); // This state can be removed
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
-      navigation.navigate(targetScreen, { searchTerm }); // Use the targetScreen prop
+      navigation.navigate(targetScreen, { searchTerm });
       setSearchTerm(""); // Clear the input after navigating
     }
   };
@@ -29,9 +36,11 @@ export default function SearchBar({ targetScreen }) {
           <FontAwesome5 name="search" size={20} />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => {}} style={styles.categoryIcon}>
-        <FontAwesome5 name="filter" size={24} />
-      </TouchableOpacity>
+      {showFilter && ( // Show filter only if showFilter is true
+        <TouchableOpacity onPress={toggleFilter} style={styles.categoryIcon}>
+          <FontAwesome5 name="filter" size={24} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

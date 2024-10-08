@@ -1,7 +1,19 @@
 // src/components/LoadingSpinner.js
 import React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
 
-const LoadingSpinner = () => <ActivityIndicator size="large" color="#007BFF" />;
+const LoadingSpinner = () => (
+  <View style={styles.container}>
+    <ActivityIndicator size={60} color="#007BFF" />
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center", // Center vertically
+    alignItems: "center", // Center horizontally
+  },
+});
 
 export default LoadingSpinner;

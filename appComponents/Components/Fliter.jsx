@@ -1,25 +1,12 @@
+// src/components/Filter.js
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
-const filterOptions = [
-  "Vegetables",
-  "Dairy & Eggs",
-  "Meat",
-  "Seafood",
-  "Plant-based",
-  "Bread & Bakery",
-  "Canned Goods",
-  "Snacks & Sweets",
-  "Tea & Coffee",
-  "Soft Drinks",
-  "Juices",
-  "Water",
-];
-
-export default function Filter() {
+export default function Filter({ options }) {
+  // Accept options as a prop
   return (
     <View style={styles.Filter}>
-      {filterOptions.map((item, index) => (
+      {options.map((item, index) => (
         <TouchableOpacity key={index} style={styles.categoryButton}>
           <Text style={styles.categoryText}>{item}</Text>
         </TouchableOpacity>
