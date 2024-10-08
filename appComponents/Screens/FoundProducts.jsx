@@ -87,11 +87,10 @@ export default function FoundProducts({ route }) {
 
   // Function to toggle source filter
   const toggleStoreFilter = (source) => {
-    setSelectedStores(
-      (prevStores) =>
-        prevStores.includes(source)
-          ? prevStores.filter((s) => s !== source) // Remove source if already selected
-          : [...prevStores, source] // Add source if not selected
+    setSelectedStores((prevStores) =>
+      prevStores.includes(source)
+        ? prevStores.filter((s) => s !== source) // Remove source if already selected
+        : [...prevStores, source] // Add source if not selected
     );
   };
 
