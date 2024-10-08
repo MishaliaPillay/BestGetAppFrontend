@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import NoProductsMessage from "../Components/NoProductsMessage";
 import ProductItem from "../Components/ProductItem";
@@ -14,6 +20,7 @@ export default function FoundProducts({ route }) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchTerm); // State for search query (for API call)
   const [userInput, setUserInput] = useState(searchTerm); // State for user's typed input
+  const [selectedStores, setSelectedStores] = useState([]); // Stores selected for filtering
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -25,13 +32,17 @@ export default function FoundProducts({ route }) {
         );
 
         const allProducts = response.data;
-        // Filter products based on the search query
+        // Filter products based on the search query and selected stores
         const filteredProducts = allProducts
           .filter((product) => {
             const productNameWords = product.name.toLowerCase().split(" ");
-            return productNameWords.some((word) =>
+            const matchesSearchQuery = productNameWords.some((word) =>
               word.startsWith(searchQuery.toLowerCase())
             );
+            const matchesStoreFilter =
+              selectedStores.length === 0 ||
+              selectedStores.includes(product.source); // Filter by source if selected
+            return matchesSearchQuery && matchesStoreFilter;
           })
           .sort((a, b) => {
             const priceA = parseFloat(a.price.replace("R", ""));
@@ -50,7 +61,7 @@ export default function FoundProducts({ route }) {
     if (searchQuery) {
       fetchProducts();
     }
-  }, [searchQuery]); // Only fetch products when searchQuery changes
+  }, [searchQuery, selectedStores]); // Fetch products whenever searchQuery or selectedStores changes
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
@@ -69,6 +80,16 @@ export default function FoundProducts({ route }) {
     setSearchQuery(userInput); // Set the search query to the user input (trigger the search)
   };
 
+  // Function to toggle source filter
+  const toggleStoreFilter = (source) => {
+    setSelectedStores(
+      (prevStores) =>
+        prevStores.includes(source)
+          ? prevStores.filter((s) => s !== source) // Remove source if already selected
+          : [...prevStores, source] // Add source if not selected
+    );
+  };
+
   return (
     <View style={styles.container}>
       <SearchBar
@@ -78,6 +99,31 @@ export default function FoundProducts({ route }) {
         setSearchTerm={setUserInput} // Update the user's input as they type
         onSearch={handleSearchSubmit} // Call handleSearchSubmit when the user submits
       />
+
+      {/* Filter Buttons for Stores */}
+      <View style={styles.filterContainer}>
+        {["Checkers", "Pick n pay", "Woolworths"].map((source) => (
+          <TouchableOpacity
+            key={source}
+            style={[
+              styles.filterButton,
+              selectedStores.includes(source) && styles.filterButtonActive,
+            ]}
+            onPress={() => toggleStoreFilter(source)}
+          >
+            <Text
+              style={[
+                styles.filterButtonText,
+                selectedStores.includes(source) &&
+                  styles.filterButtonTextActive,
+              ]}
+            >
+              {source}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {loading ? (
         <LoadingSpinner />
       ) : displayedProducts.length === 0 ? (
@@ -105,5 +151,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  filterButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 25,
+    backgroundColor: "white",
+  },
+  filterButtonActive: {
+    backgroundColor: "#007bff", // Active button color
+  },
+  filterButtonText: {
+    color: "black",
+  },
+  filterButtonTextActive: {
+    color: "white",
   },
 });
