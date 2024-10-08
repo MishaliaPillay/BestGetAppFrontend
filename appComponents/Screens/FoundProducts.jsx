@@ -6,12 +6,14 @@ import NoProductsMessage from "../Components/NoProductsMessage";
 import ProductItem from "../Components/ProductItem";
 import Pagination from "../Components/Pagination";
 import axios from "axios";
+import SearchBar from "../Components/Searchbar"; // Import the SearchBar component
 
 export default function FoundProducts({ route }) {
-  const { searchTerm } = route.params;
+  const { searchTerm } = route.params; // Initial search term from the previous screen
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(searchTerm); // State for user search input
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -23,11 +25,12 @@ export default function FoundProducts({ route }) {
         );
 
         const allProducts = response.data;
+        // Filter products based on the initial search term and current search query
         const filteredProducts = allProducts
           .filter((product) => {
             const productNameWords = product.name.toLowerCase().split(" ");
             return productNameWords.some((word) =>
-              word.startsWith(searchTerm.toLowerCase())
+              word.startsWith(searchQuery.toLowerCase())
             );
           })
           .sort((a, b) => {
@@ -45,7 +48,7 @@ export default function FoundProducts({ route }) {
     };
 
     fetchProducts();
-  }, [searchTerm]);
+  }, [searchQuery]); // Fetch products whenever searchQuery changes
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
@@ -61,6 +64,13 @@ export default function FoundProducts({ route }) {
 
   return (
     <View style={styles.container}>
+      <SearchBar
+        targetScreen="FoundProducts" // You can set this to the same screen if you want to keep it simple
+        showFilter={false} // Set to false as we don't need filter options in this context
+        searchTerm={searchQuery} // Pass current search query to SearchBar
+        setSearchTerm={setSearchQuery} // Function to update the search query
+        navigateOnSearch={false} // Set to false for the FoundProducts screen
+      />
       {loading ? (
         <LoadingSpinner />
       ) : displayedProducts.length === 0 ? (
