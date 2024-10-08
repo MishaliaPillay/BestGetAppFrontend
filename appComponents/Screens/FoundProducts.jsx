@@ -1,4 +1,3 @@
-// src/FoundProducts.js
 import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import LoadingSpinner from "../Components/LoadingSpinner";
@@ -13,7 +12,8 @@ export default function FoundProducts({ route }) {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchTerm); // State for user search input
+  const [searchQuery, setSearchQuery] = useState(searchTerm); // State for search query (for API call)
+  const [userInput, setUserInput] = useState(searchTerm); // State for user's typed input
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function FoundProducts({ route }) {
         );
 
         const allProducts = response.data;
-        // Filter products based on the initial search term and current search query
+        // Filter products based on the search query
         const filteredProducts = allProducts
           .filter((product) => {
             const productNameWords = product.name.toLowerCase().split(" ");
@@ -47,8 +47,10 @@ export default function FoundProducts({ route }) {
       }
     };
 
-    fetchProducts();
-  }, [searchQuery]); // Fetch products whenever searchQuery changes
+    if (searchQuery) {
+      fetchProducts();
+    }
+  }, [searchQuery]); // Only fetch products when searchQuery changes
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
@@ -62,14 +64,19 @@ export default function FoundProducts({ route }) {
     }
   };
 
+  // Function to handle search submission
+  const handleSearchSubmit = () => {
+    setSearchQuery(userInput); // Set the search query to the user input (trigger the search)
+  };
+
   return (
     <View style={styles.container}>
       <SearchBar
-        targetScreen="FoundProducts" // You can set this to the same screen if you want to keep it simple
-        showFilter={false} // Set to false as we don't need filter options in this context
-        searchTerm={searchQuery} // Pass current search query to SearchBar
-        setSearchTerm={setSearchQuery} // Function to update the search query
-        navigateOnSearch={false} // Set to false for the FoundProducts screen
+        targetScreen="FoundProducts"
+        showFilter={false}
+        searchTerm={userInput} // Bind the user's input to the search bar
+        setSearchTerm={setUserInput} // Update the user's input as they type
+        onSearch={handleSearchSubmit} // Call handleSearchSubmit when the user submits
       />
       {loading ? (
         <LoadingSpinner />

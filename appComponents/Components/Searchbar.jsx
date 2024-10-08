@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons"; // For icons
-import { useNavigation } from "@react-navigation/native";
 
 export default function SearchBar({
-  targetScreen,
   showFilter,
-  options,
-  toggleFilter,
   searchTerm,
   setSearchTerm,
-  onSearch, // New prop for search action
+  onSearch, // Function to trigger the search
+  toggleFilter
 }) {
-  const navigation = useNavigation();
-
   return (
     <View style={styles.container}>
       <View style={styles.searchSection}>
@@ -21,7 +16,7 @@ export default function SearchBar({
           placeholder="Search here"
           style={styles.searchInput}
           value={searchTerm}
-          onChangeText={setSearchTerm}
+          onChangeText={setSearchTerm} // Updates user input
           onSubmitEditing={onSearch} // Trigger search on Enter
         />
         <TouchableOpacity style={styles.searchIcon} onPress={onSearch}>
