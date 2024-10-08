@@ -21,7 +21,12 @@ export default function FoundProducts({ route }) {
   const [searchQuery, setSearchQuery] = useState(searchTerm); // State for search query (for API call)
   const [userInput, setUserInput] = useState(searchTerm); // State for user's typed input
   const [selectedStores, setSelectedStores] = useState([]); // Stores selected for filtering
+  const [showFilter, setShowFilter] = useState(false); // State to manage filter visibility
   const itemsPerPage = 10;
+
+  const handleToggleFilter = () => {
+    setShowFilter((prev) => !prev); // Toggle the filter visibility
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -94,35 +99,38 @@ export default function FoundProducts({ route }) {
     <View style={styles.container}>
       <SearchBar
         targetScreen="FoundProducts"
-        showFilter={false}
+        showFilter={true}
+        toggleFilter={handleToggleFilter} // Pass the toggle function
         searchTerm={userInput} // Bind the user's input to the search bar
         setSearchTerm={setUserInput} // Update the user's input as they type
         onSearch={handleSearchSubmit} // Call handleSearchSubmit when the user submits
       />
 
-      {/* Filter Buttons for Stores */}
-      <View style={styles.filterContainer}>
-        {["Checkers", "Pick n pay", "Woolworths"].map((source) => (
-          <TouchableOpacity
-            key={source}
-            style={[
-              styles.filterButton,
-              selectedStores.includes(source) && styles.filterButtonActive,
-            ]}
-            onPress={() => toggleStoreFilter(source)}
-          >
-            <Text
+      {/* Conditionally render the filter buttons based on showFilter state */}
+      {showFilter && (
+        <View style={styles.filterContainer}>
+          {["Checkers", "Pick n pay", "Woolworths"].map((source) => (
+            <TouchableOpacity
+              key={source}
               style={[
-                styles.filterButtonText,
-                selectedStores.includes(source) &&
-                  styles.filterButtonTextActive,
+                styles.filterButton,
+                selectedStores.includes(source) && styles.filterButtonActive,
               ]}
+              onPress={() => toggleStoreFilter(source)}
             >
-              {source}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+              <Text
+                style={[
+                  styles.filterButtonText,
+                  selectedStores.includes(source) &&
+                    styles.filterButtonTextActive,
+                ]}
+              >
+                {source}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
 
       {loading ? (
         <LoadingSpinner />

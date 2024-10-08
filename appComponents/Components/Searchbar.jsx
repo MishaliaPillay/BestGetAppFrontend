@@ -7,7 +7,7 @@ export default function SearchBar({
   searchTerm,
   setSearchTerm,
   onSearch, // Function to trigger the search
-  toggleFilter
+  toggleFilter,
 }) {
   return (
     <View style={styles.container}>
