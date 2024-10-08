@@ -18,7 +18,10 @@ export default function Home() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Header />
-        <SearchBar onToggleFilter={handleToggleFilter} />
+        <SearchBar
+          onToggleFilter={handleToggleFilter}
+          targetScreen="FoundProducts"
+        />
         {showFilter && <FilterList />}
         <RecentSearches />
         <Recommendations />

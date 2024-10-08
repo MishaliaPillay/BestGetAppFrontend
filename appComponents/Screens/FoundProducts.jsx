@@ -1,4 +1,3 @@
-// Import necessary libraries
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -6,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator, // Import ActivityIndicator for loading spinner
 } from "react-native";
 import { Image } from "expo-image"; // Importing Image from expo-image
 import axios from "axios";
@@ -21,21 +21,41 @@ export default function FoundProducts({ route }) {
   const { searchTerm } = route.params;
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // New loading state
   const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true); // Start loading when fetching begins
       try {
         const response = await axios.get(
           `https://bestgetappscripts.onrender.com/products`
         );
+
         const allProducts = response.data;
-        const filteredProducts = allProducts.filter((product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        const filteredProducts = allProducts
+          .filter((product) => {
+            // Split the product name into words
+            const productNameWords = product.name.toLowerCase().split(" ");
+
+            // Check if any word in the product name starts with the search term
+            return productNameWords.some((word) =>
+              word.startsWith(searchTerm.toLowerCase())
+            );
+          })
+          .sort((a, b) => {
+            // Remove 'R' and parse price strings as floats for comparison
+            const priceA = parseFloat(a.price.replace("R", ""));
+            const priceB = parseFloat(b.price.replace("R", ""));
+            return priceA - priceB; // Sorting by price (ascending)
+          });
+
         setProducts(filteredProducts);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching products:", error.message);
+        console.error("Error code:", error.code);
+      } finally {
+        setLoading(false); // Stop loading when fetch completes
       }
     };
 
@@ -75,65 +95,74 @@ export default function FoundProducts({ route }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={displayedProducts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.productItem}>
-            <View style={styles.productDetails}>
-              <Image
-                source={{ uri: item.image }}
-                style={styles.productImage}
-                contentFit="cover" // Similar to resizeMode in FastImage
-              />
-              <View style={styles.productInfo}>
-                <View style={styles.productHeader}>
-                  <Text style={styles.productName}>{item.name}</Text>
-                  {item.source && logos[item.source] && (
-                    <Image
-                      source={logos[item.source]}
-                      style={styles.storeLogo}
-                    />
-                  )}
+      {loading ? (
+        <ActivityIndicator size="large" color="#007BFF" /> // Display loading spinner
+      ) : displayedProducts.length === 0 ? (
+        <Text style={styles.noProductsText}>
+          No products matching your search were found.
+        </Text>
+      ) : (
+        <FlatList
+          data={displayedProducts}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.productItem}>
+              <View style={styles.productDetails}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.productImage}
+                  contentFit="cover"
+                />
+                <View style={styles.productInfo}>
+                  <View style={styles.productHeader}>
+                    <Text style={styles.productName}>{item.name}</Text>
+                    {item.source && logos[item.source] && (
+                      <Image
+                        source={logos[item.source]}
+                        style={styles.storeLogo}
+                      />
+                    )}
+                  </View>
+                  <Text style={styles.productPrice}>{item.price}</Text>
                 </View>
-                <Text style={styles.productPrice}>{item.price}</Text>
               </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
 
-      {/* Pagination component */}
-      <View style={styles.pagination}>
-        <TouchableOpacity
-          onPress={handlePreviousPage}
-          disabled={currentPage === 1}
-          style={styles.pageButton}
-        >
-          <Text style={styles.pageButtonText}>{"<"}</Text>
-        </TouchableOpacity>
-
-        {getPaginationRange().map((page) => (
+      {!loading && displayedProducts.length > 0 && (
+        <View style={styles.pagination}>
           <TouchableOpacity
-            key={page}
-            onPress={() => setCurrentPage(page)}
-            style={[
-              styles.pageButton,
-              currentPage === page && styles.activePageButton,
-            ]}
+            onPress={handlePreviousPage}
+            disabled={currentPage === 1}
+            style={styles.pageButton}
           >
-            <Text style={styles.pageButtonText}>{page}</Text>
+            <Text style={styles.pageButtonText}>{"<"}</Text>
           </TouchableOpacity>
-        ))}
 
-        <TouchableOpacity
-          onPress={handleNextPage}
-          disabled={currentPage === totalPages}
-          style={styles.pageButton}
-        >
-          <Text style={styles.pageButtonText}>{">"}</Text>
-        </TouchableOpacity>
-      </View>
+          {getPaginationRange().map((page) => (
+            <TouchableOpacity
+              key={page}
+              onPress={() => setCurrentPage(page)}
+              style={[
+                styles.pageButton,
+                currentPage === page && styles.activePageButton,
+              ]}
+            >
+              <Text style={styles.pageButtonText}>{page}</Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity
+            onPress={handleNextPage}
+            disabled={currentPage === totalPages}
+            style={styles.pageButton}
+          >
+            <Text style={styles.pageButtonText}>{">"}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -155,8 +184,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   productImage: {
-    width: 80, // Adjusted width for better layout
-    height: 80, // Adjusted height for better layout
+    width: 80,
+    height: 80,
     marginRight: 10,
   },
   productInfo: {
@@ -197,5 +226,11 @@ const styles = StyleSheet.create({
   },
   pageButtonText: {
     color: "black",
+  },
+  noProductsText: {
+    fontSize: 18,
+    color: "gray",
+    textAlign: "center",
+    marginTop: 20,
   },
 });

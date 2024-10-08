@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons"; // For icons
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
-export default function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState('');
+export default function SearchBar({ targetScreen }) {
+  // Accept targetScreen as a prop
+  const [searchTerm, setSearchTerm] = useState("");
   const navigation = useNavigation();
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
-      navigation.navigate('FoundProducts', { searchTerm });
-      setSearchTerm(''); // Clear the input after navigating
+      navigation.navigate(targetScreen, { searchTerm }); // Use the targetScreen prop
+      setSearchTerm(""); // Clear the input after navigating
     }
   };
 
