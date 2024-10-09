@@ -5,63 +5,37 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Button,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+
+// Sample list data for initialization
+const sampleLists = [
+  { id: "1", name: "Groceries", totalPrice: 50, itemCount: 0, items: [] },
+  { id: "2", name: "Weekly Shop", totalPrice: 75, itemCount: 0, items: [] },
+  { id: "3", name: "Special Items", totalPrice: 100, itemCount: 0, items: [] },
+];
 
 export default function Lists() {
   const navigation = useNavigation();
   const [lists, setLists] = useState([]);
 
   useEffect(() => {
-    const fetchLists = async () => {
-      const storedLists = await loadListsFromStorage();
-      setLists(storedLists);
+    // Load the lists from AsyncStorage
+    const loadLists = async () => {
+      const storedLists = await AsyncStorage.getItem("lists");
+      if (storedLists) {
+        setLists(JSON.parse(storedLists));
+      } else {
+        setLists(sampleLists);
+      }
     };
-    fetchLists();
+
+    loadLists();
   }, []);
-
-  const loadListsFromStorage = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("@lists");
-      return jsonValue != null ? JSON.parse(jsonValue) : [];
-    } catch (e) {
-      console.error("Error loading data", e);
-      return [];
-    }
-  };
-
-  const saveListsToStorage = async (updatedLists) => {
-    try {
-      const jsonValue = JSON.stringify(updatedLists);
-      await AsyncStorage.setItem("@lists", jsonValue);
-    } catch (e) {
-      console.error("Error saving data", e);
-    }
-  };
 
   const handleListClick = (list) => {
     navigation.navigate("SelectList", { list });
-  };
-
-  const handleAddItemToList = async (item, quantity) => {
-    const listIndex = lists.findIndex((list) => list.id === item.listId); // Get the index of the selected list
-    if (listIndex !== -1) {
-      const updatedLists = [...lists];
-      const selectedList = updatedLists[listIndex];
-
-      // Add item details to the selected list
-      selectedList.items.push({ ...item, quantity });
-
-      // Update total price and item count
-      selectedList.totalPrice += item.price * quantity;
-      selectedList.itemCount += quantity;
-
-      updatedLists[listIndex] = selectedList; // Update the list
-      setLists(updatedLists); // Update state
-      await saveListsToStorage(updatedLists); // Save to AsyncStorage
-    }
   };
 
   return (
@@ -78,15 +52,6 @@ export default function Lists() {
             <Text style={styles.listDetails}>
               Price: ${item.totalPrice.toFixed(2)} | Items: {item.itemCount}
             </Text>
-            <Button
-              title="Add Item"
-              onPress={() =>
-                handleAddItemToList(
-                  { name: "Item Name", price: 10, listId: item.id },
-                  2
-                )
-              }
-            />
           </TouchableOpacity>
         )}
       />

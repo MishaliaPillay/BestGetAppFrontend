@@ -46,11 +46,17 @@ export default function ItemCard({ route, navigation }) {
       <Text style={styles.storeLabel}>This item is from {item.source}</Text>
 
       <View style={styles.quantityContainer}>
-        <TouchableOpacity onPress={decrementQuantity} style={styles.quantityButton}>
+        <TouchableOpacity
+          onPress={decrementQuantity}
+          style={styles.quantityButton}
+        >
           <Text style={styles.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={styles.quantityValue}>{quantity}</Text>
-        <TouchableOpacity onPress={incrementQuantity} style={styles.quantityButton}>
+        <TouchableOpacity
+          onPress={incrementQuantity}
+          style={styles.quantityButton}
+        >
           <Text style={styles.quantityText}>+</Text>
         </TouchableOpacity>
       </View>
