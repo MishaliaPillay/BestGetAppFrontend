@@ -1,14 +1,16 @@
-// src/components/Filter.js
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
-export default function Filter({ options }) {
-  // Accept options as a prop
+export default function Filter({ options, onFilterSelect }) {
   return (
-    <View style={styles.Filter}>
-      {options.map((item, index) => (
-        <TouchableOpacity key={index} style={styles.categoryButton}>
-          <Text style={styles.categoryText}>{item}</Text>
+    <View style={styles.container}>
+      {options.map((option) => (
+        <TouchableOpacity
+          key={option}
+          style={styles.filterButton}
+          onPress={() => onFilterSelect(option)} // Call the filter selection function
+        >
+          <Text style={styles.filterText}>{option}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -16,24 +18,21 @@ export default function Filter({ options }) {
 }
 
 const styles = StyleSheet.create({
-  Filter: {
-    flexDirection: "row", // Arrange buttons in a row
-    flexWrap: "wrap", // Allow wrapping to the next line
-    justifyContent: "center", // Center align all buttons in the container
-    marginBottom: 10,
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap", // Allow wrapping of buttons
+    justifyContent: "flex-start", // Align items to the start of the container
+    marginVertical: 10,
   },
-  categoryButton: {
-    height: 40,
-    paddingVertical: 10, // Padding top and bottom
-    paddingHorizontal: 15, // Padding left and right
-    margin: 5, // Margin for spacing around each button
-    backgroundColor: "#f0f0f0",
-    borderRadius: 20,
-    flexShrink: 1, // Allow button to shrink based on text length
-    justifyContent: "center", // Center align text vertically
-    alignItems: "center", // Center align text horizontally
+  filterButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 25,
+    backgroundColor: "white",
+    margin: 5, // Add margin to create space between buttons
   },
-  categoryText: {
-    textAlign: "center", // Center align text horizontally
+  filterText: {
+    color: "black",
   },
 });

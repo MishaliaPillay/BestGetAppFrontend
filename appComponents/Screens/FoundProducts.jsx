@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import LoadingSpinner from "../Components/LoadingSpinner";
 import NoProductsMessage from "../Components/NoProductsMessage";
 import ProductItem from "../Components/ProductItem";
@@ -22,6 +24,7 @@ export default function FoundProducts({ route }) {
   const [userInput, setUserInput] = useState(searchTerm); // State for user's typed input
   const [selectedStores, setSelectedStores] = useState([]); // Stores selected for filtering
   const [showFilter, setShowFilter] = useState(false); // State to manage filter visibility
+  const navigation = useNavigation(); // Use the navigation hook here
   const itemsPerPage = 10;
 
   const handleToggleFilter = () => {
@@ -37,6 +40,7 @@ export default function FoundProducts({ route }) {
         );
 
         const allProducts = response.data;
+
         // Filter products based on the search query and selected stores
         const filteredProducts = allProducts
           .filter((product) => {
@@ -87,10 +91,11 @@ export default function FoundProducts({ route }) {
 
   // Function to toggle source filter
   const toggleStoreFilter = (source) => {
-    setSelectedStores((prevStores) =>
-      prevStores.includes(source)
-        ? prevStores.filter((s) => s !== source) // Remove source if already selected
-        : [...prevStores, source] // Add source if not selected
+    setSelectedStores(
+      (prevStores) =>
+        prevStores.includes(source)
+          ? prevStores.filter((s) => s !== source) // Remove source if already selected
+          : [...prevStores, source] // Add source if not selected
     );
   };
 
@@ -139,7 +144,15 @@ export default function FoundProducts({ route }) {
         <FlatList
           data={displayedProducts}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <ProductItem item={item} />}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ItemCard", { item })} // Passing item to ItemCard
+              >
+                <ProductItem item={item} />
+              </TouchableOpacity>
+            );
+          }}
         />
       )}
 

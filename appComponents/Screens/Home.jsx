@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { useNavigation } from "@react-navigation/native";
 import Header from "../Components/Header";
 import SearchBar from "../Components/Searchbar";
 import Filter from "../Components/Fliter"; // Corrected import
@@ -9,9 +9,9 @@ import Recommendations from "../Components/Recommendations";
 import CategoryBoxes from "../Components/CategoryBoxes";
 
 export default function Home() {
-  const navigation = useNavigation(); // Initialize navigation
-  const [showFilter, setShowFilter] = useState(false); // State to manage filter visibility
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const navigation = useNavigation();
+  const [showFilter, setShowFilter] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const HomeFilterOptions = [
     "Vegetables",
     "Dairy & Eggs",
@@ -28,14 +28,19 @@ export default function Home() {
   ];
 
   const handleToggleFilter = () => {
-    setShowFilter((prev) => !prev); // Toggle the filter visibility
+    setShowFilter((prev) => !prev);
   };
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
-      navigation.navigate("FoundProducts", { searchTerm }); // Use navigation object here
-      setSearchTerm(""); // Clear the input after navigating
+      navigation.navigate("FoundProducts", { searchTerm });
+      setSearchTerm("");
     }
+  };
+
+  const handleFilterSelect = (filter) => {
+    navigation.navigate("Categories", { selectedCategory: filter }); // Change here
+    setShowFilter(false); // Optionally hide the filter after selection
   };
 
   return (
@@ -45,13 +50,18 @@ export default function Home() {
         <SearchBar
           targetScreen="FoundProducts"
           showFilter={true}
-          toggleFilter={handleToggleFilter} // Pass the toggle function
-          options={HomeFilterOptions} // Pass the filter options
-          searchTerm={searchTerm} // Pass current search term
-          setSearchTerm={setSearchTerm} // Function to update search term
-          onSearch={handleSearch} // Pass the search handler
+          toggleFilter={handleToggleFilter}
+          options={HomeFilterOptions}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSearch={handleSearch}
         />
-        {showFilter && <Filter options={HomeFilterOptions} />}
+        {showFilter && (
+          <Filter
+            options={HomeFilterOptions}
+            onFilterSelect={handleFilterSelect} // Pass the filter selection function
+          />
+        )}
         <RecentSearches />
         <Recommendations />
         <CategoryBoxes />

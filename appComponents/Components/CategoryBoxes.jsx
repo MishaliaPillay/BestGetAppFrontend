@@ -37,12 +37,12 @@ export default function CategoryBoxes() {
   const boxWidth = screenWidth / 2 - 40; // Calculate box width (adjusting for margin)
 
   const handleCategoryPress = (categoryName) => {
-    navigation.navigate("Categories", { categoryName });
+    navigation.navigate("Categories", { selectedCategory: categoryName }); // Pass selectedCategory
   };
 
   return (
     <>
-      <Text style={styles.sectionTitle}>CategoryNamesCategoryNames</Text>
+      <Text style={styles.sectionTitle}>Categories</Text>
       <View style={styles.gridContainer}>
         {CategoryNames.map((category) => (
           <TouchableOpacity

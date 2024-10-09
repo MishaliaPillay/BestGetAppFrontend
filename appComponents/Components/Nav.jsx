@@ -4,6 +4,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "../Screens/Home"; // Adjust paths as necessary
 import Favorites from "../Screens/Favorites";
 import Lists from "../Screens/Lists";
+import ItemCard from "../Screens/ItemCard";
+import SelectList from "../Screens/SelectedList";
+
 import Settings from "../Screens/Settings";
 import FoundProducts from "../Screens/FoundProducts"; // Import your FoundProducts component
 import Categories from "../Screens/Categories"; // Import your Categories component
@@ -21,14 +24,22 @@ function HomeStackScreen() {
         component={Home}
         options={{ headerShown: false }} // Hides the header for the Home screen
       />
-      <HomeStack.Screen
-        name="Categories"
-        component={Categories}
-      />
+      <HomeStack.Screen name="Categories" component={Categories} />
       <HomeStack.Screen
         name="FoundProducts" // Replace SearchResults with FoundProducts
         component={FoundProducts}
-        options={{ title: 'Found Products' }} // Set the title for the header
+        options={{ title: "Found Products" }} // Set the title for the header
+      />
+      <HomeStack.Screen
+        name="ItemCard" // Replace SearchResults with FoundProducts
+        component={ItemCard}
+        options={{ title: "Product details" }} // Set the title for the header
+      />
+
+      <HomeStack.Screen
+        name="SelectList" // Replace SearchResults with FoundProducts
+        component={SelectList}
+        options={{ title: "Selected List" }} // Set the title for the header
       />
     </HomeStack.Navigator>
   );
@@ -74,7 +85,7 @@ export default function Nav() {
         }}
       />
       <Tab.Screen
-        name="ListsTab"
+        name="Lists"
         component={Lists}
         options={{
           tabBarLabel: "",
