@@ -11,22 +11,22 @@ import { useNavigation } from "@react-navigation/native";
 
 // Sample data for CategoryNames
 const CategoryNames = [
-  { id: 1, name: "Vegetables", image: require("../../assets/images/icon.png") },
-  { id: 2, name: "Meat", image: require("../../assets/images/icon.png") },
+  { id: 1, name: "Vegetables", image: require("../../assets/images/Veg.png") },
+  { id: 2, name: "Meat", image: require("../../assets/images/Meat.png") },
   {
     id: 3,
     name: "Dairy & Eggs",
-    image: require("../../assets/images/icon.png"),
+    image: require("../../assets/images/DairyEggs.png"),
   },
-  { id: 4, name: "Seafood", image: require("../../assets/images/icon.png") },
-  { id: 5, name: "Fruits", image: require("../../assets/images/icon.png") },
-  { id: 6, name: "Grains", image: require("../../assets/images/icon.png") },
-  { id: 7, name: "Snacks", image: require("../../assets/images/icon.png") },
-  { id: 8, name: "Beverages", image: require("../../assets/images/icon.png") },
+  { id: 4, name: "Seafood", image: require("../../assets/images/Seafood.png") },
+  { id: 5, name: "Fruits", image: require("../../assets/images/Fruit.png") },
+  { id: 6, name: "Grains", image: require("../../assets/images/Grains.png") },
+  { id: 7, name: "Snacks", image: require("../../assets/images/Snacks.png") },
+  { id: 8, name: "Beverages", image: require("../../assets/images/Bev.png") },
   {
     id: 9,
     name: "Frozen Foods",
-    image: require("../../assets/images/icon.png"),
+    image: require("../../assets/images/Frozen.png"),
   },
   // Add more CategoryNames here
 ];
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Add horizontal margin for consistent spacing
   },
   categoryImage: {
-    width: 70,
-    height: 70,
+    width: 90,
+    height: 90,
     marginBottom: 10,
   },
   categoryText: {

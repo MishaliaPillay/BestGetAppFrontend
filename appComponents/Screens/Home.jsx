@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../Components/Header";
 import SearchBar from "../Components/Searchbar";
-import Filter from "../Components/Fliter"; // Corrected import
+import Filter from "../Components/Fliter";
 import RecentSearches from "../Components/RecentSearches";
 import Recommendations from "../Components/Recommendations";
 import CategoryBoxes from "../Components/CategoryBoxes";
@@ -12,6 +13,8 @@ export default function Home() {
   const navigation = useNavigation();
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [name, setName] = useState(""); // State for the user's name
+
   const HomeFilterOptions = [
     "Vegetables",
     "Dairy & Eggs",
@@ -27,6 +30,24 @@ export default function Home() {
     "Water",
   ];
 
+  // Retrieve the name from AsyncStorage when the screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      const fetchName = async () => {
+        try {
+          const storedName = await AsyncStorage.getItem("userName");
+          if (storedName) {
+            setName(storedName); // Set the name if it exists in storage
+          }
+        } catch (error) {
+          console.error("Error fetching name:", error);
+        }
+      };
+
+      fetchName();
+    }, [])
+  );
+
   const handleToggleFilter = () => {
     setShowFilter((prev) => !prev);
   };
@@ -39,14 +60,15 @@ export default function Home() {
   };
 
   const handleFilterSelect = (filter) => {
-    navigation.navigate("Categories", { selectedCategory: filter }); // Change here
-    setShowFilter(false); // Optionally hide the filter after selection
+    navigation.navigate("Categories", { selectedCategory: filter });
+    setShowFilter(false);
   };
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Header />
+        {/* Pass the name as a prop to Header to display it */}
+        <Header name={name} />
         <SearchBar
           targetScreen="FoundProducts"
           showFilter={true}
@@ -59,7 +81,7 @@ export default function Home() {
         {showFilter && (
           <Filter
             options={HomeFilterOptions}
-            onFilterSelect={handleFilterSelect} // Pass the filter selection function
+            onFilterSelect={handleFilterSelect}
           />
         )}
         <RecentSearches />

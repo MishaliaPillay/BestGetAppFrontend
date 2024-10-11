@@ -7,19 +7,12 @@
     },
     "preview2": {
       "android": {
-        "gradleCommand": ":app:assembleRelease --warning-mode all"
+        "gradleCommand": ":app:assembleRelease"
       }
     },
     "preview3": {
       "developmentClient": true
     },
-    "preview4": {
-      "distribution": "internal"
-    },
-    "production": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease --warning-mode all"
-      }
-    }
+    "production": {}
   }
 }

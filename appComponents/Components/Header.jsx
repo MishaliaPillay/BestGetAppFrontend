@@ -1,25 +1,25 @@
-// Header.jsx
-import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
-export default function Header() {
+const Header = ({ name }) => {
   return (
-    <View style={styles.header}>
-      <Text style={styles.greetingText}>Hi, Wyatt</Text>
-      <Text style={styles.subHeaderText}>What do you need?</Text>
+    <View style={styles.headerContainer}>
+      <Text style={styles.headerText}>Welcome, {name || "Guest"}!</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: 10,
+  headerContainer: {
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: "#f8f8f8",
+    alignItems: "center",
   },
-  greetingText: {
+  headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
-  },
-  subHeaderText: {
-    color: 'gray',
+    fontWeight: "bold",
   },
 });
+
+export default Header;
