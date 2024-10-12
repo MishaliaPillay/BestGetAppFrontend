@@ -85,7 +85,7 @@ export default function Nav() {
 
           if (route.name === "HomeTab") {
             iconName = "home";
-          } else if (route.name === "FavoritesTab") {
+          } else if (route.name === "Favorites") {
             iconName = "heart";
           } else if (route.name === "Lists") {
             iconName = "list";
@@ -106,11 +106,10 @@ export default function Nav() {
         }}
       />
       <Tab.Screen
-        name="FavoritesTab"
+        name="Favorites"
         component={Favorites}
         options={{
           tabBarLabel: "",
-          headerShown: false, // Hides the header for FavoritesTab
         }}
       />
       <Tab.Screen

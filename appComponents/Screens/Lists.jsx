@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { Swipeable } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import icons if using Expo
 
 // Sample list data for initialization
 const sampleLists = [
@@ -24,7 +26,6 @@ export default function Lists() {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Load the lists from AsyncStorage whenever the screen is focused
       const loadLists = async () => {
         const storedLists = await AsyncStorage.getItem("lists");
         if (storedLists) {
@@ -34,11 +35,10 @@ export default function Lists() {
         }
       };
       loadLists();
-    }, []) // Dependency array ensures this effect runs when the screen is focused
+    }, [])
   );
 
   const handleListClick = (list) => {
-    // Navigate to SelectedList page, passing the selected list
     navigation.navigate("SelectedList", { list });
   };
 
@@ -62,7 +62,6 @@ export default function Lists() {
     setLists(updatedLists);
     setNewListName("");
 
-    // Update AsyncStorage
     await AsyncStorage.setItem("lists", JSON.stringify(updatedLists));
   };
 
@@ -70,8 +69,19 @@ export default function Lists() {
     const updatedLists = lists.filter((list) => list.id !== id);
     setLists(updatedLists);
 
-    // Update AsyncStorage
     await AsyncStorage.setItem("lists", JSON.stringify(updatedLists));
+  };
+
+  // Render the right swipe action (delete button)
+  const renderRightActions = (id) => {
+    return (
+      <TouchableOpacity
+        style={styles.deleteButtonContainer}
+        onPress={() => deleteList(id)}
+      >
+        <MaterialCommunityIcons name="trash-can" size={24} color="white" />
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -94,20 +104,19 @@ export default function Lists() {
         data={lists}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.listItemContainer}>
-            <TouchableOpacity
-              onPress={() => handleListClick(item)}
-              style={styles.listItem}
-            >
-              <Text style={styles.listTitle}>{item.name}</Text>
-              <Text style={styles.listDetails}>
-                Total Price: {item.totalPrice} | Items: {item.itemCount}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => deleteList(item.id)}>
-              <Text style={styles.deleteButton}>Delete</Text>
-            </TouchableOpacity>
-          </View>
+          <Swipeable renderRightActions={() => renderRightActions(item.id)}>
+            <View style={styles.listItemContainer}>
+              <TouchableOpacity
+                onPress={() => handleListClick(item)}
+                style={styles.listItem}
+              >
+                <Text style={styles.listTitle}>{item.name}</Text>
+                <Text style={styles.listDetails}>
+                  Total Price: {item.totalPrice} | Items: {item.itemCount}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Swipeable>
         )}
       />
     </View>
@@ -148,9 +157,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
   },
-  deleteButton: {
-    color: "red",
-    fontWeight: "bold",
-    paddingHorizontal: 10,
+  deleteButtonContainer: {
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 70,
+    height: "100%",
   },
 });

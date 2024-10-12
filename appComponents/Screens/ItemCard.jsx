@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import {
   View,
   Text,
@@ -10,13 +10,16 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for heart icons
 
 export default function ItemCard({ route, navigation }) {
   const { item } = route.params; // Passed product details from FoundProducts screen
   const [lists, setLists] = useState([]); // Shopping lists
   const [selectedList, setSelectedList] = useState(null); // Selected list
   const [quantity, setQuantity] = useState(1); // Quantity of the product
+  const [isFavorited, setIsFavorited] = useState(false); // Favorite state
 
+  // Load lists and check if item is favorited on focus
   useFocusEffect(
     React.useCallback(() => {
       const loadLists = async () => {
@@ -25,7 +28,18 @@ export default function ItemCard({ route, navigation }) {
           setLists(JSON.parse(storedLists));
         }
       };
+
+      const checkFavorites = async () => {
+        const favorites = await AsyncStorage.getItem("favorites");
+        const parsedFavorites = favorites ? JSON.parse(favorites) : [];
+        const isFavorited = parsedFavorites.some(
+          (favItem) => favItem.id === item.id
+        );
+        setIsFavorited(isFavorited);
+      };
+
       loadLists();
+      checkFavorites();
     }, []) // This is the dependency array for useCallback
   );
 
@@ -62,6 +76,25 @@ export default function ItemCard({ route, navigation }) {
     alert(`${item.name} has been added to ${selectedList.name}`);
   };
 
+  const handleToggleFavorite = async () => {
+    const favorites = await AsyncStorage.getItem("favorites");
+    const parsedFavorites = favorites ? JSON.parse(favorites) : [];
+
+    if (isFavorited) {
+      // Remove from favorites
+      const updatedFavorites = parsedFavorites.filter(
+        (favItem) => favItem.id !== item.id
+      );
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorited(false);
+    } else {
+      // Add to favorites
+      const updatedFavorites = [...parsedFavorites, item];
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorited(true);
+    }
+  };
+
   const renderItem = ({ item: list }) => (
     <TouchableOpacity
       style={
@@ -81,6 +114,15 @@ export default function ItemCard({ route, navigation }) {
       <Text style={styles.itemName}>{item.name}</Text>
       <Text style={styles.price}>{item.price}</Text>
       <Text style={styles.storeLabel}>This item is from {item.source}</Text>
+
+      {/* Favorite Button */}
+      <TouchableOpacity onPress={handleToggleFavorite}>
+        <Ionicons
+          name={isFavorited ? "heart" : "heart-outline"}
+          size={30}
+          color={isFavorited ? "red" : "#06974d"}
+        />
+      </TouchableOpacity>
 
       <View style={styles.quantityContainer}>
         <TouchableOpacity
