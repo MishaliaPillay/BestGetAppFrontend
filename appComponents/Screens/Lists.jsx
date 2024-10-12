@@ -43,14 +43,16 @@ export default function Lists() {
   };
 
   const addNewList = async () => {
-    if (newListName.trim() === "") {
-      alert("Please enter a list name.");
+    const trimmedName = newListName.trim();
+
+    if (trimmedName === "") {
+      alert("List name cannot be empty or only spaces.");
       return;
     }
 
     const newList = {
       id: (lists.length + 1).toString(),
-      name: newListName,
+      name: trimmedName,
       totalPrice: 0,
       itemCount: 0,
       items: [],
@@ -81,8 +83,12 @@ export default function Lists() {
         placeholder="Enter new list name"
         value={newListName}
         onChangeText={setNewListName}
+        maxLength={20}
       />
-      <Button title="Add New List" onPress={addNewList} />
+
+      {newListName.trim().length > 0 && (
+        <Button title="Add New List" onPress={addNewList} />
+      )}
 
       <FlatList
         data={lists}
