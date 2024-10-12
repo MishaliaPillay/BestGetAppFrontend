@@ -68,7 +68,7 @@ function SettingsStackScreen() {
 export default function Nav() {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarStyle: {
           height: 60, // Increase height for better alignment
           paddingBottom: 0, // Adjust padding to bring icons higher
@@ -79,16 +79,29 @@ export default function Nav() {
         tabBarIconStyle: {
           marginTop: 5, // Adjust vertical icon alignment
         },
-      }}
+        tabBarIcon: ({ focused, size }) => {
+          let iconName;
+          let color = focused ? "#06974d" : "gray"; // Set color based on whether the tab is selected or not
+
+          if (route.name === "HomeTab") {
+            iconName = "home";
+          } else if (route.name === "FavoritesTab") {
+            iconName = "heart";
+          } else if (route.name === "Lists") {
+            iconName = "list";
+          } else if (route.name === "SettingsTab") {
+            iconName = "settings";
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
     >
       <Tab.Screen
         name="HomeTab"
         component={HomeStackScreen}
         options={{
           tabBarLabel: "", // Name that appears below the icon
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color={color} size={size} />
-          ),
           headerShown: false, // Hides the header for HomeTab
         }}
       />
@@ -97,9 +110,6 @@ export default function Nav() {
         component={Favorites}
         options={{
           tabBarLabel: "",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart" color={color} size={size} />
-          ),
           headerShown: false, // Hides the header for FavoritesTab
         }}
       />
@@ -108,9 +118,6 @@ export default function Nav() {
         component={Lists}
         options={{
           tabBarLabel: "",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" color={color} size={size} />
-          ),
           headerShown: false, // Hides the header for ListsTab
         }}
       />
@@ -119,9 +126,6 @@ export default function Nav() {
         component={SettingsStackScreen} // Use the Settings stack with EditName
         options={{
           tabBarLabel: "",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" color={color} size={size} />
-          ),
           headerShown: false, // Hides the header for SettingsTab
         }}
       />

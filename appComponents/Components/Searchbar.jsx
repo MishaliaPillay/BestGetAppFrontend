@@ -20,12 +20,12 @@ export default function SearchBar({
           onSubmitEditing={onSearch} // Trigger search on Enter
         />
         <TouchableOpacity style={styles.searchIcon} onPress={onSearch}>
-          <FontAwesome5 name="search" size={20} color="gray" />
+          <FontAwesome5 name="search" size={20} color="#06974d" />
         </TouchableOpacity>
       </View>
       {showFilter && (
         <TouchableOpacity onPress={toggleFilter} style={styles.categoryIcon}>
-          <FontAwesome5 name="filter" size={24} color="gray" />
+          <FontAwesome5 name="filter" size={24} color="#06974d" />
         </TouchableOpacity>
       )}
     </View>
@@ -43,17 +43,19 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   searchInput: {
+    fontSize: 18,
     padding: 10,
-    borderColor: "gray",
+    borderColor: "#06974d",
     borderWidth: 1.5,
     borderRadius: 25,
     backgroundColor: "#fcfcfc",
+    paddingLeft: 30,
   },
   searchIcon: {
     position: "absolute",
     right: 10,
     top: 15,
-    Color: "gray",
+    Color: "#06974d",
   },
   categoryIcon: {
     marginLeft: 10,

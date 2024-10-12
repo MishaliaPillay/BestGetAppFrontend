@@ -68,7 +68,6 @@ export default function Home() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-       
         <Header name={name} />
         <SearchBar
           targetScreen="FoundProducts"
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
     // Use dynamic background color from theme context
   },
   scrollContainer: {
-    paddingTop: "1%",
+    paddingTop: "5%",
     paddingHorizontal: 20,
   },
 });

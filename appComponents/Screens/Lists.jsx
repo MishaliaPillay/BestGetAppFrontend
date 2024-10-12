@@ -115,13 +115,11 @@ export default function Lists() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
+  container: { flex: 1, padding: 20, paddingTop: "5%" },
   input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
+    borderColor: "#06974d",
+    borderWidth: 1.5,
+    borderRadius: 25,
     padding: 10,
     marginBottom: 10,
   },
@@ -137,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listName: {
+    paddingTop: "15%",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
