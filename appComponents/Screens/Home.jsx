@@ -16,6 +16,7 @@ export default function Home() {
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [name, setName] = useState("");
+  const [recentSearches, setRecentSearches] = useState([]); // State for recent searches
 
   const HomeFilterOptions = [
     "Vegetables",
@@ -45,7 +46,19 @@ export default function Home() {
         }
       };
 
+      const loadRecentSearches = async () => {
+        try {
+          const storedSearches = await AsyncStorage.getItem("recentSearches");
+          if (storedSearches) {
+            setRecentSearches(JSON.parse(storedSearches));
+          }
+        } catch (error) {
+          console.error("Error loading recent searches:", error);
+        }
+      };
+
       fetchName();
+      loadRecentSearches();
     }, [])
   );
 
@@ -53,10 +66,33 @@ export default function Home() {
     setShowFilter((prev) => !prev);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchTerm.trim()) {
+      // Save the search term to AsyncStorage
+      const updatedSearches = await saveSearch(searchTerm.trim());
+      setRecentSearches(updatedSearches); // Update state with recent searches
       navigation.navigate("FoundProducts", { searchTerm });
       setSearchTerm("");
+    }
+  };
+
+  const saveSearch = async (term) => {
+    try {
+      const storedSearches = await AsyncStorage.getItem("recentSearches");
+      const recentSearchesArray = storedSearches ? JSON.parse(storedSearches) : [];
+
+      // Add the new term and remove duplicates
+      const newSearches = [...new Set([term, ...recentSearchesArray])];
+      
+      // Keep only the last 10 searches
+      const updatedSearches = newSearches.slice(0, 10);
+
+      // Save back to AsyncStorage
+      await AsyncStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+      return updatedSearches;
+    } catch (error) {
+      console.error("Error saving search:", error);
+      return [];
     }
   };
 
@@ -84,7 +120,7 @@ export default function Home() {
             onFilterSelect={handleFilterSelect}
           />
         )}
-        <RecentSearches />
+        <RecentSearches searches={recentSearches} /> 
         <Recommendations />
         <CategoryBoxes />
       </ScrollView>

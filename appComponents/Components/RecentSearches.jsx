@@ -1,17 +1,22 @@
-// RecentSearches.jsx
 import React from "react";
 import { FlatList, Text, View, StyleSheet } from "react-native";
 import { useTheme, ThemedView, ThemedText } from "../Components/Theme"; // Import useTheme and Themed components
-export default function RecentSearches() {
+
+export default function RecentSearches({ searches }) {
+  // Accept searches as prop
   return (
     <>
       <ThemedText style={styles.sectionTitle}>Recent searches</ThemedText>
 
       <FlatList
         horizontal
-        data={[1, 2, 3, 4]} // Placeholder data for recent searches
-        renderItem={({ item }) => <View style={styles.placeholderBox}></View>}
-        keyExtractor={(item) => item.toString()}
+        data={searches} // Use the passed searches
+        renderItem={({ item }) => (
+          <View style={styles.placeholderBox}>
+            <ThemedText>{item}</ThemedText> 
+          </View>
+        )}
+        keyExtractor={(item, index) => index.toString()} // Use index as key for simplicity
         showsHorizontalScrollIndicator={false}
       />
     </>
@@ -30,5 +35,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     marginRight: 10,
     borderRadius: 10,
+    justifyContent: "center", // Center the text vertically
+    alignItems: "center", // Center the text horizontally
   },
 });
