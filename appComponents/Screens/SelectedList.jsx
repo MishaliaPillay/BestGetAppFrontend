@@ -2,22 +2,35 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function SelectList({ route }) {
-  const { list } = route.params; // Get the selected list details
-  const [items, setItems] = useState(list.items);
+export default function SelectedList({ route, navigation }) {
+  const { list } = route.params || {}; // Safeguard in case route params are undefined
+  const [items, setItems] = useState(list?.items || []); // Handle undefined list
+
+  // Safeguard in case list is not passed
+  if (!list) {
+    return (
+      <View style={styles.container}>
+        <Text>No list selected.</Text>
+      </View>
+    );
+  }
 
   const addItemToList = async (newItem) => {
     const updatedItems = [...items, newItem];
     setItems(updatedItems);
 
     // Update the total price and item count
-    list.totalPrice += newItem.price;
-    list.itemCount += 1;
+    const updatedList = {
+      ...list,
+      items: updatedItems,
+      totalPrice: list.totalPrice + newItem.price,
+      itemCount: list.itemCount + 1,
+    };
 
     // Update AsyncStorage
     const storedLists = JSON.parse(await AsyncStorage.getItem("lists")) || [];
     const updatedLists = storedLists.map((storedList) =>
-      storedList.id === list.id ? { ...storedList, items: updatedItems, totalPrice: list.totalPrice, itemCount: list.itemCount } : storedList
+      storedList.id === list.id ? updatedList : storedList
     );
 
     await AsyncStorage.setItem("lists", JSON.stringify(updatedLists));
@@ -29,17 +42,13 @@ export default function SelectList({ route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.listTitle}>{list.name}</Text>
-      <Text style={styles.listDetails}>
-        Price: ${list.totalPrice.toFixed(2)} | Items: {list.itemCount}
-      </Text>
+      <Text style={styles.listDetails}>Price: | Items: {list.itemCount}</Text>
 
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <Text>{item.name}</Text>}
       />
-
-      <Button title="Add Milk" onPress={() => addItemToList(exampleNewItem)} />
     </View>
   );
 }

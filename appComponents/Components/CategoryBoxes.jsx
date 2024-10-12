@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10, // Add some horizontal margin to the container
   },
   categoryBox: {
-    borderWidth: 3, // Dynamic border color will be applied
+    borderWidth: 2, // Dynamic border color will be applied
     height: 150, // Keep the height fixed for uniformity
     
     marginBottom: 20,

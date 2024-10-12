@@ -1,46 +1,83 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { Image } from "expo-image"; // Importing Image from expo-image
+import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+  FlatList,
+} from "react-native";
+import { Image } from "expo-image";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ItemCard({ route, navigation }) {
   const { item } = route.params; // Passed product details from FoundProducts screen
+  const [lists, setLists] = useState([]); // Shopping lists
+  const [selectedList, setSelectedList] = useState(null); // Selected list
   const [quantity, setQuantity] = useState(1); // Quantity of the product
-  const [selectedList, setSelectedList] = useState(""); // Selected list for "Add to list"
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadLists = async () => {
+        const storedLists = await AsyncStorage.getItem("lists");
+        if (storedLists) {
+          setLists(JSON.parse(storedLists));
+        }
+      };
+      loadLists();
+    }, []) // This is the dependency array for useCallback
+  );
 
   const incrementQuantity = () => setQuantity(quantity + 1);
   const decrementQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
 
-  const handleAddToList = () => {
-    navigation.navigate("Lists", { selectedList, item: { ...item, quantity } });
+  const handleAddToList = async () => {
+    if (!selectedList) {
+      alert("Please select a list to add this item to.");
+      return;
+    }
+
+    const newItem = { ...item, quantity };
+
+    // Update the selected list with the new item
+    const updatedLists = lists.map((list) => {
+      if (list.id === selectedList.id) {
+        const updatedList = {
+          ...list,
+          items: [...list.items, newItem],
+          itemCount: list.itemCount + 1,
+          totalPrice: list.totalPrice + item.price * quantity,
+        };
+        return updatedList;
+      }
+      return list;
+    });
+
+    // Update state and AsyncStorage
+    setLists(updatedLists);
+    await AsyncStorage.setItem("lists", JSON.stringify(updatedLists));
+    alert(`${item.name} has been added to ${selectedList.name}`);
   };
 
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          /* Handle back button */
-        }}
-        style={styles.backButton}
-      >
-        <Text>{"<"}</Text>
-      </TouchableOpacity>
+  const renderItem = ({ item: list }) => (
+    <TouchableOpacity
+      style={
+        selectedList?.id === list.id ? styles.selectedList : styles.listButton
+      }
+      onPress={() => setSelectedList(list)}
+    >
+      <Text>{list.name}</Text>
+    </TouchableOpacity>
+  );
 
-      <TouchableOpacity
-        onPress={() => {
-          /* Handle adding to favorites */
-        }}
-        style={styles.favButton}
-      >
-        <Text>♥</Text>
-      </TouchableOpacity>
-
+  const listHeaderComponent = () => (
+    <>
       {item.image && (
         <Image source={{ uri: item.image }} style={styles.image} />
       )}
-
       <Text style={styles.itemName}>{item.name}</Text>
       <Text style={styles.price}>{item.price}</Text>
       <Text style={styles.storeLabel}>This item is from {item.source}</Text>
@@ -61,42 +98,33 @@ export default function ItemCard({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.listContainer}>
-        <Text style={styles.addToList}>Add to list</Text>
-        <Picker
-          selectedValue={selectedList}
-          onValueChange={(itemValue) => setSelectedList(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select a list" value="" />
-          <Picker.Item label="Groceries" value="groceries" />
-          <Picker.Item label="Weekly Shop" value="weekly-shop" />
-          <Picker.Item label="Special Items" value="special-items" />
-        </Picker>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddToList}>
-          <Text style={styles.addButtonText}>Add to {selectedList}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <Text style={styles.selectListLabel}>Select a List:</Text>
+    </>
+  );
+
+  return (
+    <FlatList
+      data={lists}
+      keyExtractor={(list) => list.id.toString()} // Ensure unique keys
+      renderItem={renderItem}
+      ListHeaderComponent={listHeaderComponent}
+      ListEmptyComponent={
+        <Text>No lists available. Please create one first.</Text>
+      }
+      ListFooterComponent={
+        <Button title="Add to Selected List" onPress={handleAddToList} />
+      }
+      style={styles.flatList} // Added style here
+      contentContainerStyle={styles.container} // Added for consistent padding
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
     backgroundColor: "#fff",
     alignItems: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-  },
-  favButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
   },
   image: {
     width: 200,
@@ -139,31 +167,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  listContainer: {
-    marginTop: 20,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    padding: 10,
-  },
-  addToList: {
+  selectListLabel: {
     fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 10,
   },
-  picker: {
-    width: "100%",
-  },
-  addButton: {
-    backgroundColor: "#007bff",
+  listButton: {
     padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    marginVertical: 5,
+    backgroundColor: "#f9f9f9",
   },
-  addButtonText: {
-    color: "#fff",
-    fontSize: 18,
+  selectedList: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 5,
+    marginVertical: 5,
+    backgroundColor: "#cce5ff",
   },
 });

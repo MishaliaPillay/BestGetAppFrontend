@@ -5,7 +5,7 @@ import Home from "../Screens/Home"; // Adjust paths as necessary
 import Favorites from "../Screens/Favorites";
 import Lists from "../Screens/Lists";
 import ItemCard from "../Screens/ItemCard";
-import SelectList from "../Screens/SelectedList";
+import SelectedList from "../Screens/SelectedList";
 import Settings from "../Screens/Settings";
 import EditName from "../Components/EditName";
 
@@ -38,9 +38,9 @@ function HomeStackScreen() {
         options={{ title: "Product Details" }}
       />
       <HomeStack.Screen
-        name="SelectList"
-        component={SelectList}
-        options={{ title: "Selected List" }}
+        name="SelectedList"
+        component={SelectedList}
+        options={{ title: "SelectedList" }}
       />
     </HomeStack.Navigator>
   );
@@ -60,7 +60,6 @@ function SettingsStackScreen() {
         component={EditName}
         options={{ title: "Edit Name" }} // Title for the Edit Name screen
       />
-     
     </SettingsStack.Navigator>
   );
 }
@@ -105,7 +104,7 @@ export default function Nav() {
         }}
       />
       <Tab.Screen
-        name="ListsTab"
+        name="Lists"
         component={Lists}
         options={{
           tabBarLabel: "",
