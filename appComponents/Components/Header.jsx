@@ -1,11 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTheme, ThemedView, ThemedText } from "../Components/Theme"; // Import useTheme and Themed components
 
 const Header = ({ name }) => {
   return (
-    <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>Welcome, {name || "Guest"}!</Text>
-    </View>
+    <ThemedView style={styles.headerContainer}>
+      <ThemedText style={styles.headerText}>
+        Welcome, {name || "Guest"}!
+      </ThemedText>
+    </ThemedView>
   );
 };
 

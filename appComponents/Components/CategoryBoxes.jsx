@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme, ThemedView, ThemedText } from "../Components/Theme"; // Import useTheme and Themed components
 
 // Sample data for CategoryNames
 const CategoryNames = [
@@ -35,6 +36,7 @@ export default function CategoryBoxes() {
   const navigation = useNavigation(); // To navigate to the CategoryNames screen
   const screenWidth = Dimensions.get("window").width; // Get screen width
   const boxWidth = screenWidth / 2 - 40; // Calculate box width (adjusting for margin)
+  const { themeColors } = useTheme(); // Access themeColors from the context
 
   const handleCategoryPress = (categoryName) => {
     navigation.navigate("Categories", { selectedCategory: categoryName }); // Pass selectedCategory
@@ -42,19 +44,22 @@ export default function CategoryBoxes() {
 
   return (
     <>
-      <Text style={styles.sectionTitle}>Categories</Text>
-      <View style={styles.gridContainer}>
+      <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
+      <ThemedView style={styles.gridContainer}>
         {CategoryNames.map((category) => (
           <TouchableOpacity
             key={category.id}
-            style={[styles.categoryBox, { width: boxWidth }]} // Use calculated width
+            style={[
+              styles.categoryBox,
+              { width: boxWidth, borderColor: themeColors.border }, // Use dynamic border color
+            ]}
             onPress={() => handleCategoryPress(category.name)}
           >
             <Image source={category.image} style={styles.categoryImage} />
-            <Text style={styles.categoryText}>{category.name}</Text>
+            <ThemedText style={styles.categoryText}>{category.name}</ThemedText>
           </TouchableOpacity>
         ))}
-      </View>
+      </ThemedView>
     </>
   );
 }
@@ -72,8 +77,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10, // Add some horizontal margin to the container
   },
   categoryBox: {
+    borderWidth: 3, // Dynamic border color will be applied
     height: 150, // Keep the height fixed for uniformity
-    backgroundColor: "#f0f0f0",
+    
     marginBottom: 20,
     borderRadius: 10,
     justifyContent: "center",

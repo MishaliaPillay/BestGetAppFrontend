@@ -6,14 +6,16 @@ import Favorites from "../Screens/Favorites";
 import Lists from "../Screens/Lists";
 import ItemCard from "../Screens/ItemCard";
 import SelectList from "../Screens/SelectedList";
-
 import Settings from "../Screens/Settings";
+import EditName from "../Components/EditName";
+
 import FoundProducts from "../Screens/FoundProducts"; // Import your FoundProducts component
 import Categories from "../Screens/Categories"; // Import your Categories component
 import { Ionicons } from "@expo/vector-icons"; // Icon library
 
 const Tab = createBottomTabNavigator(); // Bottom Tab Navigator
 const HomeStack = createStackNavigator(); // Stack Navigator for Home
+const SettingsStack = createStackNavigator(); // Stack Navigator for Settings
 
 // Home stack screen component with its own navigation stack
 function HomeStackScreen() {
@@ -26,22 +28,40 @@ function HomeStackScreen() {
       />
       <HomeStack.Screen name="Categories" component={Categories} />
       <HomeStack.Screen
-        name="FoundProducts" // Replace SearchResults with FoundProducts
+        name="FoundProducts"
         component={FoundProducts}
-        options={{ title: "Found Products" }} // Set the title for the header
+        options={{ title: "Found Products" }}
       />
       <HomeStack.Screen
-        name="ItemCard" // Replace SearchResults with FoundProducts
+        name="ItemCard"
         component={ItemCard}
-        options={{ title: "Product details" }} // Set the title for the header
+        options={{ title: "Product Details" }}
       />
-
       <HomeStack.Screen
-        name="SelectList" // Replace SearchResults with FoundProducts
+        name="SelectList"
         component={SelectList}
-        options={{ title: "Selected List" }} // Set the title for the header
+        options={{ title: "Selected List" }}
       />
     </HomeStack.Navigator>
+  );
+}
+
+// Settings stack screen component with its own navigation stack
+function SettingsStackScreen() {
+  return (
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen
+        name="Settings"
+        component={Settings}
+        options={{ title: "Settings" }} // Title for the Settings screen
+      />
+      <SettingsStack.Screen
+        name="EditName"
+        component={EditName}
+        options={{ title: "Edit Name" }} // Title for the Edit Name screen
+      />
+     
+    </SettingsStack.Navigator>
   );
 }
 
@@ -64,7 +84,7 @@ export default function Nav() {
     >
       <Tab.Screen
         name="HomeTab"
-        component={HomeStackScreen} // You can control the header inside HomeStackScreen
+        component={HomeStackScreen}
         options={{
           tabBarLabel: "", // Name that appears below the icon
           tabBarIcon: ({ color, size }) => (
@@ -81,29 +101,29 @@ export default function Nav() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" color={color} size={size} />
           ),
-          headerShown: false, // Show the header for FavoritesTab
+          headerShown: false, // Hides the header for FavoritesTab
         }}
       />
       <Tab.Screen
-        name="Lists"
+        name="ListsTab"
         component={Lists}
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" color={color} size={size} />
           ),
-          headerShown: false, // Show the header for ListsTab
+          headerShown: false, // Hides the header for ListsTab
         }}
       />
       <Tab.Screen
         name="SettingsTab"
-        component={Settings}
+        component={SettingsStackScreen} // Use the Settings stack with EditName
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" color={color} size={size} />
           ),
-          headerShown: false, // Show the header for SettingsTab
+          headerShown: false, // Hides the header for SettingsTab
         }}
       />
     </Tab.Navigator>

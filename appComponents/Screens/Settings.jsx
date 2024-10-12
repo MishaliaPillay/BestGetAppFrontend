@@ -1,40 +1,19 @@
-import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { Button, StyleSheet } from "react-native";
+import { useTheme, ThemedView } from "../Components/Theme"; // Ensure the import is correct
 
 const Settings = ({ navigation }) => {
-  const [name, setName] = useState("");
-
-  const saveName = async () => {
-    const trimmedName = name.trim(); // Remove any extra spaces
-
-    // Validate if the name is empty after trimming
-    if (trimmedName === "") {
-      Alert.alert("Invalid Name", "Please enter a valid name."); // Show alert if empty
-      return; // Stop execution if invalid
-    }
-
-    try {
-      await AsyncStorage.setItem("userName", trimmedName); // Save the trimmed name
-      Alert.alert("Success", "Name saved successfully!");
-      navigation.goBack(); // Navigate back to Home page after saving
-    } catch (error) {
-      console.error("Error saving name:", error);
-    }
-  };
+  // Ensure navigation is destructured from props
+  const { toggleTheme } = useTheme(); // Access toggle function from context
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Enter your name:</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-        placeholder="Your Name"
-        maxLength={20}
+    <ThemedView style={styles.container}>
+      <Button
+        title="Edit Name"
+        onPress={() => navigation.navigate("EditName")} // Navigate to EditName screen
       />
-      <Button title="Save" onPress={saveName} />
-    </View>
+      <Button title="Toggle Theme" onPress={toggleTheme} />
+    </ThemedView>
   );
 };
 
@@ -43,17 +22,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
   },
 });
 

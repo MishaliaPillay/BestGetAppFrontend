@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import React, { useState, useCallback } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../Components/Header";
 import SearchBar from "../Components/Searchbar";
@@ -8,12 +8,14 @@ import Filter from "../Components/Fliter";
 import RecentSearches from "../Components/RecentSearches";
 import Recommendations from "../Components/Recommendations";
 import CategoryBoxes from "../Components/CategoryBoxes";
+import { useTheme, ThemedView, ThemedText } from "../Components/Theme"; // Import useTheme and Themed components
 
 export default function Home() {
   const navigation = useNavigation();
+  const { themeColors } = useTheme(); // Get theme colors from context
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [name, setName] = useState(""); // State for the user's name
+  const [name, setName] = useState("");
 
   const HomeFilterOptions = [
     "Vegetables",
@@ -30,14 +32,13 @@ export default function Home() {
     "Water",
   ];
 
-  // Retrieve the name from AsyncStorage when the screen gains focus
   useFocusEffect(
     useCallback(() => {
       const fetchName = async () => {
         try {
           const storedName = await AsyncStorage.getItem("userName");
           if (storedName) {
-            setName(storedName); // Set the name if it exists in storage
+            setName(storedName);
           }
         } catch (error) {
           console.error("Error fetching name:", error);
@@ -65,9 +66,9 @@ export default function Home() {
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Pass the name as a prop to Header to display it */}
+       
         <Header name={name} />
         <SearchBar
           targetScreen="FoundProducts"
@@ -88,14 +89,14 @@ export default function Home() {
         <Recommendations />
         <CategoryBoxes />
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // Use dynamic background color from theme context
   },
   scrollContainer: {
     paddingTop: "1%",
