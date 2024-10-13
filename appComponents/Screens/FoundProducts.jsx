@@ -44,13 +44,18 @@ export default function FoundProducts({ route }) {
         // Filter products based on the search query and selected stores
         const filteredProducts = allProducts
           .filter((product) => {
-            const productNameWords = product.name.toLowerCase().split(" ");
-            const matchesSearchQuery = productNameWords.some((word) =>
-              word.startsWith(searchQuery.toLowerCase())
+            const productName = product.name.toLowerCase();
+
+            // Check if the product name contains the full search query, not just starting with it
+            const matchesSearchQuery = productName.includes(
+              searchQuery.toLowerCase()
             );
+
+            // Check if the product matches the selected store filter
             const matchesStoreFilter =
               selectedStores.length === 0 ||
               selectedStores.includes(product.source); // Filter by source if selected
+
             return matchesSearchQuery && matchesStoreFilter;
           })
           .sort((a, b) => {
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
   filterButton: {
     padding: 10,
     borderWidth: 1,
-  
+
     borderRadius: 25,
     backgroundColor: "white",
   },
