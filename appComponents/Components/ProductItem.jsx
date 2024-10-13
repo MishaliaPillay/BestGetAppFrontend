@@ -27,11 +27,16 @@ const ProductItem = ({ item }) => (
 
 const styles = StyleSheet.create({
   productItem: {
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
+    marginBottom: 10,
+
     paddingBottom: 10,
     paddingVertical: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    alignItems: "center",
   },
   productDetails: {
     flexDirection: "row",
@@ -59,6 +64,8 @@ const styles = StyleSheet.create({
   storeLogo: {
     width: 30,
     height: 30,
+    borderRadius: 10,
+    marginRight: 10,
   },
   productPrice: {
     color: "gray",
