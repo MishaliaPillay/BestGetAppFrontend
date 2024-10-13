@@ -48,7 +48,28 @@ export const ThemeProvider = ({ children }) => {
 export const ThemedView = ({ children, style }) => {
   const { themeColors } = useTheme();
   return (
-    <View style={[styles.container, style, { backgroundColor: themeColors.background }]}>
+    <View
+      style={[
+        styles.container,
+        style,
+        { backgroundColor: themeColors.background },
+      ]}
+    >
+      {children}
+    </View>
+  );
+};
+// ThemedViewShadow component
+export const ThemedViewShadow = ({ children, style }) => {
+  const { themeColors } = useTheme();
+  return (
+    <View
+      style={[
+        style,
+        { backgroundColor: themeColors.background },
+        themeColors.boxShadow, // Apply box shadow styles
+      ]}
+    >
       {children}
     </View>
   );
@@ -57,7 +78,11 @@ export const ThemedView = ({ children, style }) => {
 // ThemedText component
 export const ThemedText = ({ children, style }) => {
   const { themeColors } = useTheme();
-  return <Text style={[styles.text, style, { color: themeColors.text }]}>{children}</Text>;
+  return (
+    <Text style={[styles.text, style, { color: themeColors.text }]}>
+      {children}
+    </Text>
+  );
 };
 
 // Styles

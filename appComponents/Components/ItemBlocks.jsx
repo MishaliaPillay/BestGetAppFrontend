@@ -2,9 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from "expo-image"; // Importing Image from expo-image
 import logos from "./Logo"; // Create logos.js to export logos object
+import { ThemedViewShadow } from "../Components/Theme"; // Import ThemedViewShadow
 
 const ItemBlock = ({ item }) => (
-  <View style={styles.productItem}>
+  <ThemedViewShadow style={styles.productItem}>
     <Image
       source={{ uri: item.image }}
       style={styles.productImage}
@@ -15,15 +16,17 @@ const ItemBlock = ({ item }) => (
         <Text style={styles.productName} numberOfLines={1}>
           {item.name}
         </Text>
+      </View>
+      <View style={styles.priceSourceContainer}>
+        <Text style={styles.productPrice} numberOfLines={1}>
+          {item.price}
+        </Text>
         {item.source && logos[item.source] && (
           <Image source={logos[item.source]} style={styles.storeLogo} />
         )}
       </View>
-      <Text style={styles.productPrice} numberOfLines={1}>
-        {item.price}
-      </Text>
     </View>
-  </View>
+  </ThemedViewShadow>
 );
 
 const styles = StyleSheet.create({
@@ -33,7 +36,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#bbedd3",
     padding: 10,
-
     height: 200, // Fixed height for the item
     paddingTop: 30,
   },
@@ -59,6 +61,12 @@ const styles = StyleSheet.create({
     textOverflow: "ellipsis", // Text overflow style
     whiteSpace: "nowrap", // Prevent wrapping
   },
+  priceSourceContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between", // Space between price and logo
+    alignItems: "center", // Align items vertically center
+    marginTop: 5, // Add some margin at the top
+  },
   storeLogo: {
     width: 30,
     height: 30,
@@ -66,7 +74,6 @@ const styles = StyleSheet.create({
   },
   productPrice: {
     color: "gray",
-    marginTop: 5,
     fontSize: 12, // Adjusted font size for consistency
     overflow: "hidden", // Hide overflow for the price
     textOverflow: "ellipsis", // Text overflow style

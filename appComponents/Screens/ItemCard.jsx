@@ -154,7 +154,12 @@ export default function ItemCard({ route, navigation }) {
         <Text>No lists available. Please create one first.</Text>
       }
       ListFooterComponent={
-        <Button title="Add to Selected List" onPress={handleAddToList} />
+        <TouchableOpacity
+          style={styles.addButton} // Use a custom style here
+          onPress={handleAddToList}
+        >
+          <Text style={styles.buttonText}>Add to Selected List</Text>
+        </TouchableOpacity>
       }
       style={styles.flatList} // Added style here
       contentContainerStyle={styles.container} // Added for consistent padding
@@ -228,5 +233,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 5,
     backgroundColor: "#cce5ff",
+  },
+
+  addButton: {
+    backgroundColor: "#06974d",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff", // White text color
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
