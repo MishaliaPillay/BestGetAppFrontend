@@ -26,8 +26,37 @@ const categoryMapping = {
   ],
   Seafood: ["fish", "shrimp", "crab", "salmon", "tuna"],
   Vegetables: ["broccoli", "spinach", "carrot", "lettuce", "tomato"],
+  Meat: ["chicken", "beef", "pork", "lamb", "bacon", "steak"],
+  "Plant-based": ["tofu", "soy", "seitan", "plant-based", "vegan"],
+  "Bread & Bakery": ["bread", "bagels", "croissant", "pastries", "rolls"],
+  "Canned Goods": [
+    "canned beans",
+    "canned corn",
+    "canned tuna",
+    "soup",
+    "tomato sauce",
+  ],
   Snacks: ["chips", "cookies", "candy", "popcorn"],
-  Beverages: ["juice", "soda", "water", "coffee", "tea"],
+  Sweets: ["chocolate", "cake", "ice cream", "donuts"],
+  "Tea & Coffee": ["tea", "coffee", "espresso", "chai", "latte"],
+  "Soft Drinks": [
+    "cola",
+    "lemonade",
+    "energy drink",
+    "coke",
+    "fanta",
+    "sparberry",
+    "creamsoda",
+  ],
+  Juices: ["orange juice", "apple juice", "grape juice", "cranberry juice"],
+  Water: ["sparkling water", "mineral water", "spring water"],
+  Grains: ["rice", "quinoa", "oats", "barley", "pasta"],
+  "Frozen Food": [
+    "frozen pizza",
+    "frozen vegetables",
+    "ice cream",
+    "frozen meals",
+  ],
 };
 
 export default function Categories({ route }) {
