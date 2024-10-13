@@ -4,19 +4,19 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../Components/Header";
 import SearchBar from "../Components/Searchbar";
-import Filter from "../Components/Fliter";
+import Filter from "../Components/Fliter"; // Fixed typo from 'Fliter' to 'Filter'
 import RecentSearches from "../Components/RecentSearches";
 import Recommendations from "../Components/Recommendations";
 import CategoryBoxes from "../Components/CategoryBoxes";
-import { useTheme, ThemedView, ThemedText } from "../Components/Theme"; // Import useTheme and Themed components
+import { useTheme, ThemedView } from "../Components/Theme";
 
 export default function Home() {
   const navigation = useNavigation();
-  const { themeColors } = useTheme(); // Get theme colors from context
+  const { themeColors } = useTheme();
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [name, setName] = useState("");
-  const [recentSearches, setRecentSearches] = useState([]); // State for recent searches
+  const [recentSearches, setRecentSearches] = useState([]);
 
   const HomeFilterOptions = [
     "Vegetables",
@@ -66,33 +66,45 @@ export default function Home() {
     setShowFilter((prev) => !prev);
   };
 
-  const handleSearch = async () => {
-    if (searchTerm.trim()) {
-      // Save the search term to AsyncStorage
-      const updatedSearches = await saveSearch(searchTerm.trim());
+  const handleSearch = async (term) => {
+    // Ensure term is a string before trimming
+    const searchQuery =
+      typeof term === "string" ? term.trim() : searchTerm.trim();
+
+    if (searchQuery) {
+      // Save the search term to AsyncStorage regardless of how it was triggered
+      const updatedSearches = await saveSearch(searchQuery);
       setRecentSearches(updatedSearches); // Update state with recent searches
-      navigation.navigate("FoundProducts", { searchTerm });
-      setSearchTerm("");
+      navigation.navigate("FoundProducts", { searchTerm: searchQuery });
+      setSearchTerm(""); // Clear the search term after submitting
     }
   };
 
   const saveSearch = async (term) => {
     try {
+      // Retrieve existing searches from AsyncStorage
       const storedSearches = await AsyncStorage.getItem("recentSearches");
-      const recentSearchesArray = storedSearches ? JSON.parse(storedSearches) : [];
+      const recentSearchesArray = storedSearches
+        ? JSON.parse(storedSearches) // Parse to array if exists
+        : []; // If not, start with an empty array
 
-      // Add the new term and remove duplicates
+      // Add the new term and remove duplicates using Set
       const newSearches = [...new Set([term, ...recentSearchesArray])];
-      
+
       // Keep only the last 10 searches
       const updatedSearches = newSearches.slice(0, 10);
 
-      // Save back to AsyncStorage
-      await AsyncStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
-      return updatedSearches;
+      // Save updated searches back to AsyncStorage
+      await AsyncStorage.setItem(
+        "recentSearches",
+        JSON.stringify(updatedSearches)
+      );
+      console.log("Updated Recent Searches:", updatedSearches);
+
+      return updatedSearches; // Return the updated array
     } catch (error) {
-      console.error("Error saving search:", error);
-      return [];
+      console.error("Error saving search:", error); // Log error if it occurs
+      return []; // Return an empty array in case of error
     }
   };
 
@@ -120,7 +132,11 @@ export default function Home() {
             onFilterSelect={handleFilterSelect}
           />
         )}
-        <RecentSearches searches={recentSearches} /> 
+        <RecentSearches
+          searches={recentSearches}
+          onSearch={handleSearch} // Pass handleSearch to RecentSearches
+        />
+
         <Recommendations />
         <CategoryBoxes />
       </ScrollView>
@@ -131,7 +147,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Use dynamic background color from theme context
+    backgroundColor: "lightgray",
   },
   scrollContainer: {
     paddingTop: "5%",

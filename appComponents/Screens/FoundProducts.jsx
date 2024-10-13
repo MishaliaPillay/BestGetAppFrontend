@@ -38,24 +38,22 @@ export default function FoundProducts({ route }) {
         const response = await axios.get(
           `https://bestgetappscripts.onrender.com/products`
         );
-
+  
         const allProducts = response.data;
-
+  
         // Filter products based on the search query and selected stores
         const filteredProducts = allProducts
           .filter((product) => {
             const productName = product.name.toLowerCase();
-
+            
             // Check if the product name contains the full search query, not just starting with it
-            const matchesSearchQuery = productName.includes(
-              searchQuery.toLowerCase()
-            );
-
+            const matchesSearchQuery = productName.includes(searchQuery.toLowerCase());
+  
             // Check if the product matches the selected store filter
             const matchesStoreFilter =
               selectedStores.length === 0 ||
               selectedStores.includes(product.source); // Filter by source if selected
-
+  
             return matchesSearchQuery && matchesStoreFilter;
           })
           .sort((a, b) => {
@@ -63,7 +61,7 @@ export default function FoundProducts({ route }) {
             const priceB = parseFloat(b.price.replace("R", ""));
             return priceA - priceB; // Sorting by price (ascending)
           });
-
+  
         setProducts(filteredProducts);
       } catch (error) {
         console.error("Error fetching products:", error.message);
@@ -71,12 +69,12 @@ export default function FoundProducts({ route }) {
         setLoading(false);
       }
     };
-
+  
     if (searchQuery) {
       fetchProducts();
     }
   }, [searchQuery, selectedStores]); // Fetch products whenever searchQuery or selectedStores changes
-
+  
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
     (currentPage - 1) * itemsPerPage,
@@ -185,7 +183,7 @@ const styles = StyleSheet.create({
   filterButton: {
     padding: 10,
     borderWidth: 1,
-
+    borderColor: "gray",
     borderRadius: 25,
     backgroundColor: "white",
   },

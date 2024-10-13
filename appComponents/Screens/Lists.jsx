@@ -72,6 +72,17 @@ export default function Lists() {
     await AsyncStorage.setItem("lists", JSON.stringify(updatedLists));
   };
 
+  // Calculate total price for each list based on its items
+  const calculateTotalPrice = (items) => {
+    return items
+      .reduce((acc, item) => {
+        const itemPrice =
+          parseFloat(item.price.replace("R", "").replace(",", "")) || 0; // Ensure correct parsing
+        return acc + itemPrice * item.quantity; // Multiply by quantity
+      }, 0)
+      .toFixed(2); // Return a fixed decimal string
+  };
+
   // Render the right swipe action (delete button)
   const renderRightActions = (id) => {
     return (
@@ -112,7 +123,8 @@ export default function Lists() {
               >
                 <Text style={styles.listTitle}>{item.name}</Text>
                 <Text style={styles.listDetails}>
-                  Total Price: {item.totalPrice} | Items: {item.itemCount}
+                  Total Price: R{calculateTotalPrice(item.items)} | Items:{" "}
+                  {item.items.length}
                 </Text>
               </TouchableOpacity>
             </View>

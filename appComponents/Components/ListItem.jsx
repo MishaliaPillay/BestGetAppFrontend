@@ -1,97 +1,90 @@
-// src/components/ListItem.js
-import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Image } from "expo-image"; // Importing Image from expo-image
-import { useFocusEffect } from "@react-navigation/native"; // Importing useFocusEffect
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Importing AsyncStorage for data management
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
+import { Button } from "react-native-elements"; // Import Button from react-native-elements
 
-const ListItem = ({ listId }) => {
-  const [list, setList] = useState(null);
-
-  // Fetch the updated list data when the screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      const fetchListData = async () => {
-        try {
-          const storedLists = await AsyncStorage.getItem("lists");
-          if (storedLists) {
-            const parsedLists = JSON.parse(storedLists);
-            const selectedList = parsedLists.find((l) => l.id === listId);
-            setList(selectedList);
-          }
-        } catch (error) {
-          console.error("Error fetching the list:", error);
-        }
-      };
-
-      fetchListData();
-    }, [listId]) // Dependency on listId
-  );
-
-  // If no list data is available, show a loading message or empty state
-  if (!list) {
-    return <Text>Loading list...</Text>;
-  }
+export default function ListItem({ item, onPress, isChecked, onCheckToggle }) {
+  // Extract numeric value from price string (assuming it starts with 'R')
+  const priceValue = parseFloat(item.price.replace("R", "")) || 0;
 
   return (
-    <View style={styles.ListItem}>
-      {list.items.map((item, index) => (
-        <View key={index} style={styles.listDetails}>
-          <Image
-            source={{ uri: item.image }}
-            style={styles.listImage}
-            contentFit="cover"
-          />
-          <View style={styles.listInfo}>
-            <View style={styles.listHeader}>
-              <Text style={styles.listName}>{item.name}</Text>
-            </View>
-            <Text style={styles.listPrice}>Quantity = {item.quantity}</Text>
-          </View>
-        </View>
-      ))}
+    <View style={[styles.itemContainer, isChecked && styles.checkedContainer]}>
+      {item.image && (
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
+      )}
+      <View style={styles.itemDetails}>
+        <Text style={[styles.itemName, isChecked && styles.checkedText]}>
+          {item.name}
+        </Text>
+        <Text style={[styles.itemStore, isChecked && styles.checkedText]}>
+          Store: {item.source}
+        </Text>
+        <Text style={[styles.itemPrice, isChecked && styles.checkedText]}>
+          Price: R{priceValue.toFixed(2)}
+        </Text>
+        <Text style={[styles.itemQuantity, isChecked && styles.checkedText]}>
+          Quantity: {item.quantity}
+        </Text>
+      </View>
+      <Button
+        title={isChecked ? "Got It!" : "Get It!"} // Change button text based on checked state
+        onPress={onCheckToggle} // Call the toggle function when the button is pressed
+        buttonStyle={styles.buttonStyle} // Optional styling for the button
+      />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  ListItem: {
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
-    paddingBottom: 10,
-    paddingVertical: 10,
-  },
-  listDetails: {
+  itemContainer: {
     flexDirection: "row",
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    backgroundColor: "#fff",
     alignItems: "center",
+    justifyContent: "space-between", // Align items with space in between
   },
-  listImage: {
-    width: 80,
-    height: 80,
+  checkedContainer: {
+    backgroundColor: "#e0e0e0", // Dim background for checked items
+  },
+  itemImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
     marginRight: 10,
   },
-  listInfo: {
+  itemDetails: {
     flex: 1,
+    justifyContent: "center",
   },
-  listHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  listName: {
-    fontWeight: "bold",
+  itemName: {
     fontSize: 16,
-    flex: 1,
+    fontWeight: "bold",
+    marginBottom: 5,
   },
-  storeLogo: {
-    width: 30,
-    height: 30,
+  itemStore: {
+    fontSize: 14,
+    color: "#555",
   },
-  listPrice: {
-    color: "gray",
+  itemPrice: {
+    fontSize: 14,
+    color: "#888",
     marginTop: 5,
   },
+  itemQuantity: {
+    fontSize: 14,
+    color: "#888",
+    marginTop: 5,
+  },
+  checkedText: {
+    textDecorationLine: "line-through", // Strike-through text when checked
+    color: "#888", // Dim text color when checked
+  },
+  buttonStyle: {
+    backgroundColor: "#4caf50", // Green color for the button
+    borderRadius: 5,
+  },
 });
-
-export default ListItem;

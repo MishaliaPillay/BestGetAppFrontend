@@ -7,7 +7,11 @@ import logos from "./Logo"; // Create logos.js to export logos object
 const ProductItem = ({ item }) => (
   <View style={styles.productItem}>
     <View style={styles.productDetails}>
-      <Image source={{ uri: item.image }} style={styles.productImage} contentFit="cover" />
+      <Image
+        source={{ uri: item.image }}
+        style={styles.productImage}
+        contentFit="cover"
+      />
       <View style={styles.productInfo}>
         <View style={styles.productHeader}>
           <Text style={styles.productName}>{item.name}</Text>
@@ -37,6 +41,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginRight: 10,
+    borderRadius: 10,
   },
   productInfo: {
     flex: 1,
