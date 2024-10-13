@@ -48,7 +48,7 @@ const categoryMapping = {
     "donuts",
   ],
   Sweets: ["chocolate", "cake", "ice cream", "donuts"],
-  "Tea & Coffee": ["tea", "coffee", "espresso", "chai", "latte"],
+  "Tea & Coffee": ["tea", "coffee", "espresso", "chai", "latte", "Rooibos", "ceylon", "five roses", "jacobs"],
   "Soft Drinks": [
     "cola",
     "lemonade",
